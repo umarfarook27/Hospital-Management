@@ -1,0 +1,67 @@
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Specialty VARCHAR(100)
+);
+
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY,
+    FullName VARCHAR(100),
+    DateOfBirth DATE,
+    Gender VARCHAR(10)
+);
+
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATE,
+    Reason VARCHAR(255),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+CREATE TABLE Treatments (
+    TreatmentID INT PRIMARY KEY,
+    AppointmentID INT,
+    Diagnosis VARCHAR(255),
+    Prescription VARCHAR(255),
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+);
+
+INSERT INTO Doctors VALUES 
+(1, 'Dr. Smith', 'Cardiology'), 
+(2, 'Dr. Brown', 'Dermatology'), 
+(3, 'Dr. Allen', 'Neurology');
+
+INSERT INTO Patients VALUES 
+(1, 'John Doe', '1990-05-15', 'Male'),
+(2, 'Jane Roe', '1985-08-25', 'Female');
+
+INSERT INTO Appointments VALUES 
+(1, 1, 1, '2025-05-01', 'Chest Pain'),
+(2, 2, 2, '2025-05-03', 'Skin Rash');
+
+INSERT INTO Treatments VALUES 
+(1, 1, 'Mild Heart Condition', 'Aspirin'),
+(2, 2, 'Allergic Reaction', 'Antihistamines');
+
+-- List of Doctors and their Specialties
+SELECT Name AS Doctor, Specialty FROM Doctors;
+
+-- List of Appointments with patient and doctor names
+SELECT p.FullName AS Patient, d.Name AS Doctor, a.AppointmentDate, a.Reason
+FROM Appointments a
+JOIN Patients p ON a.PatientID = p.PatientID
+JOIN Doctors d ON a.DoctorID = d.DoctorID;
+
+-- List of Patients treated by Dr. Smith
+SELECT p.FullName FROM Appointments a
+JOIN Patients p ON a.PatientID = p.PatientID
+WHERE a.DoctorID = 1;
+
+-- Update a diagnosis
+UPDATE Treatments SET Diagnosis = 'Updated Diagnosis' WHERE TreatmentID = 1;
+
+-- Delete an appointment
+DELETE FROM Appointments WHERE AppointmentID = 2;
